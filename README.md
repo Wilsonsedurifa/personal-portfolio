@@ -1,6 +1,6 @@
-# Personal Portfolio
+# Flask Project
 
-Personal portfolio web application built with [Flask](https://flask.palletsprojects.com/).
+A simple web application built using [Flask](https://flask.palletsprojects.com/).
 
 ## Features
 
@@ -17,7 +17,7 @@ Personal portfolio web application built with [Flask](https://flask.palletsproje
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/Wilsonsedurifa/personal-portfolio.git
+   git clone <YOUR_REPOSITORY_URL>
    cd flask_project
    ```
 

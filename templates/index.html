@@ -1,0 +1,494 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- =========================================================
+     1. HERO SECTION
+========================================================= -->
+<section id="home" class="hero-section" aria-label="Introduction">
+  <!-- Interactive Particle Background Canvas -->
+  <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
+
+  <div class="hero-container">
+    <div class="hero-badge reveal-item">
+      <span class="pulse-indicator" aria-hidden="true"></span>
+      <span class="badge-text">Bulacan PITO Staff &bull; Available for Inquiries</span>
+    </div>
+
+    <h1 class="hero-title reveal-item">
+      Hello, I'm <span class="gradient-text">{{ owner.name }}</span>
+    </h1>
+
+    <div class="hero-subtitle-wrapper reveal-item">
+      <span class="static-prefix">I build </span>
+      <span class="typing-text" data-words='["Robust Web Systems", "Laravel Applications", "Django Portals", "Flutter Mobile Apps", "Clean REST APIs"]'></span>
+      <span class="typing-cursor" aria-hidden="true">|</span>
+    </div>
+
+    <p class="hero-description reveal-item">
+      {{ owner.role }} at the <strong>{{ owner.company }}</strong>. 
+      Bridging software engineering, public-service technology, and clean user-centered design.
+    </p>
+
+    <div class="hero-actions reveal-item">
+      <a href="#projects" class="btn btn-primary btn-glow">
+        <span>View My Projects</span>
+        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+      </a>
+      <a href="#contact" class="btn btn-secondary">
+        <span>Get in Touch</span>
+        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+      </a>
+      <a href="{{ owner.github }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" aria-label="Visit GitHub Profile">
+        <i class="fa-brands fa-github" aria-hidden="true"></i>
+        <span>GitHub</span>
+      </a>
+    </div>
+
+    <div class="hero-socials reveal-item">
+      <span class="social-label">Follow &amp; Reach Out:</span>
+      <div class="social-icons-group">
+        <a href="{{ owner.github }}" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="GitHub">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <a href="{{ owner.linkedin }}" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="LinkedIn">
+          <i class="fa-brands fa-linkedin-in"></i>
+        </a>
+        <a href="mailto:{{ owner.email }}" class="social-btn" aria-label="Email">
+          <i class="fa-solid fa-envelope"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true">
+    <a href="#about" class="scroll-arrow" aria-label="Scroll down to About section">
+      <span class="scroll-mouse">
+        <span class="scroll-wheel"></span>
+      </span>
+      <i class="fa-solid fa-chevron-down cue-chevron"></i>
+    </a>
+  </div>
+</section>
+
+<!-- =========================================================
+     2. ABOUT SECTION
+========================================================= -->
+<section id="about" class="about-section section-padding" aria-label="About Me">
+  <div class="section-container">
+    <div class="section-header reveal-item">
+      <span class="section-kicker">01 // Who I Am</span>
+      <h2 class="section-title">About Me</h2>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="about-grid">
+      <!-- Left Column: Visual Profile Card -->
+      <div class="about-visual reveal-item">
+        <div class="profile-card-wrapper" id="profile-card">
+          <div class="profile-card-inner">
+            <div class="profile-avatar-frame">
+              <!-- Visual Avatar representation with professional iconography -->
+              <div class="avatar-graphic" role="img" aria-label="Wilson Brobo Sedurifa avatar">
+                <span class="avatar-initials">WS</span>
+                <i class="fa-solid fa-code avatar-icon-sub" aria-hidden="true"></i>
+              </div>
+            </div>
+            <div class="profile-card-details">
+              <h3 class="profile-name">{{ owner.name }}</h3>
+              <p class="profile-role">{{ owner.role }}</p>
+              <p class="profile-office"><i class="fa-solid fa-building-columns"></i> PITO Bulacan</p>
+            </div>
+
+            <!-- Floating Badge Overlays -->
+            <div class="floating-badge badge-laravel">
+              <i class="fa-brands fa-laravel"></i>
+              <span>Laravel</span>
+            </div>
+            <div class="floating-badge badge-django">
+              <i class="fa-brands fa-python"></i>
+              <span>Django</span>
+            </div>
+            <div class="floating-badge badge-flutter">
+              <i class="fa-solid fa-mobile-screen"></i>
+              <span>Flutter</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Narrative & Stats -->
+      <div class="about-content reveal-item">
+        <h3 class="about-subtitle">
+          Web Developer passionate about building robust public systems and modern software.
+        </h3>
+        
+        <p class="about-text">
+          I am currently working as an <strong>IT Staff / Web Developer</strong> at the 
+          <strong>Provincial Information Technology Office of Bulacan (PITO)</strong>, where I support 
+          enterprise-level government systems, database processes, and modern web application development.
+        </p>
+
+        <p class="about-text">
+          Concurrently, I am completing my <strong>BS in Information Systems</strong> at 
+          <strong>Bulacan Polytechnic College</strong> (2022–2026). My technical foundation combines 
+          full-stack web development with structured database management, clean API integration, 
+          and cross-platform mobile app development.
+        </p>
+
+        <!-- Quick Info Pills -->
+        <div class="info-pills-list">
+          <div class="info-pill">
+            <i class="fa-solid fa-location-dot pill-icon"></i>
+            <div>
+              <span class="pill-label">Location</span>
+              <span class="pill-value">{{ owner.location }}</span>
+            </div>
+          </div>
+          <div class="info-pill">
+            <i class="fa-solid fa-graduation-cap pill-icon"></i>
+            <div>
+              <span class="pill-label">Degree</span>
+              <span class="pill-value">BS Information Systems (2026)</span>
+            </div>
+          </div>
+          <div class="info-pill">
+            <i class="fa-solid fa-briefcase pill-icon"></i>
+            <div>
+              <span class="pill-label">Current Office</span>
+              <span class="pill-value">PITO Bulacan</span>
+            </div>
+          </div>
+          <div class="info-pill">
+            <i class="fa-solid fa-envelope pill-icon"></i>
+            <div>
+              <span class="pill-label">Email</span>
+              <span class="pill-value">{{ owner.email }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats Counter Grid -->
+        <div class="stats-grid">
+          {% for stat in owner.stats %}
+            <div class="stat-card">
+              <div class="stat-number-wrapper">
+                <span class="stat-number" data-target="{{ stat.value }}">0</span>
+                <span class="stat-suffix">{{ stat.suffix }}</span>
+              </div>
+              <span class="stat-label">{{ stat.label }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     3. SKILLS SECTION
+========================================================= -->
+<section id="skills" class="skills-section section-padding" aria-label="Technical Skills">
+  <div class="section-container">
+    <div class="section-header reveal-item">
+      <span class="section-kicker">02 // Capabilities</span>
+      <h2 class="section-title">Technical Skills</h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle">
+        A diverse technology stack refined through practical local government software projects and academic rigor.
+      </p>
+    </div>
+
+    <div class="skills-categories-grid">
+      {% for category, items in skills.items() %}
+        <div class="skill-category-card reveal-item">
+          <div class="category-header">
+            <div class="category-icon-box">
+              {% if category == 'Backend' %}
+                <i class="fa-solid fa-server"></i>
+              {% elif category == 'Frontend' %}
+                <i class="fa-solid fa-desktop"></i>
+              {% elif category == 'Mobile' %}
+                <i class="fa-solid fa-mobile-screen-button"></i>
+              {% else %}
+                <i class="fa-solid fa-toolbox"></i>
+              {% endif %}
+            </div>
+            <h3 class="category-title">{{ category }}</h3>
+          </div>
+
+          <div class="category-skills-list">
+            {% for skill in items %}
+              <div class="skill-bar-item">
+                <div class="skill-meta">
+                  <span class="skill-name">
+                    <i class="{{ skill.icon }}" aria-hidden="true"></i>
+                    {{ skill.name }}
+                  </span>
+                  <span class="skill-percentage">{{ skill.level }}%</span>
+                </div>
+                <div class="progress-track" role="progressbar" aria-valuenow="{{ skill.level }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ skill.name }} proficiency">
+                  <div class="progress-fill" data-progress="{{ skill.level }}"></div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     4. PROJECTS SECTION
+========================================================= -->
+<section id="projects" class="projects-section section-padding" aria-label="Featured Projects">
+  <div class="section-container">
+    <div class="section-header reveal-item">
+      <span class="section-kicker">03 // Portfolio</span>
+      <h2 class="section-title">Featured Projects</h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle">
+        Handcrafted web systems, administrative portals, and mobile applications solved with clean architecture.
+      </p>
+    </div>
+
+    <!-- Projects Grid Rendered with Jinja2 Loop -->
+    <div class="projects-grid">
+      {% for project in projects %}
+        <article class="project-card reveal-item" data-tilt>
+          <div class="project-card-header">
+            <div class="project-category-badge">
+              <span class="badge-dot" style="background-color: {{ project.accent }};"></span>
+              {{ project.category }}
+            </div>
+            <div class="project-icon-wrapper" style="color: {{ project.accent }};">
+              <i class="{{ project.icon }}" aria-hidden="true"></i>
+            </div>
+          </div>
+
+          <div class="project-card-body">
+            <h3 class="project-title">{{ project.title }}</h3>
+            <p class="project-description">{{ project.short_description }}</p>
+
+            <div class="tech-tags-list" aria-label="Technologies used">
+              {% for tag in project.tech_stack %}
+                <span class="tech-tag">{{ tag }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="project-card-footer">
+            <div class="project-actions">
+              {% if project.live_demo and project.live_demo != '#' %}
+                <a href="{{ project.live_demo }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm project-btn">
+                  <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                  <span>Live Demo</span>
+                </a>
+              {% else %}
+                <span class="btn btn-disabled btn-sm project-btn" title="Internal deployment or APK release">
+                  <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                  <span>Staff Portal</span>
+                </span>
+              {% endif %}
+
+              <a href="{{ project.github }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm project-btn">
+                <i class="fa-brands fa-github" aria-hidden="true"></i>
+                <span>GitHub</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    <!-- Additional GitHub Callout -->
+    <div class="projects-cta-box reveal-item">
+      <div class="cta-inner">
+        <i class="fa-brands fa-github-alt cta-github-icon" aria-hidden="true"></i>
+        <div class="cta-text">
+          <h3 class="cta-title">Looking for more repositories?</h3>
+          <p class="cta-desc">Explore additional experiments, utilities, and codebase commits on my GitHub.</p>
+        </div>
+        <a href="{{ owner.github }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+          <span>Visit GitHub (@{{ owner.github.split('/')[-1] }})</span>
+          <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     5. EXPERIENCE & EDUCATION TIMELINE
+========================================================= -->
+<section id="experience" class="timeline-section section-padding" aria-label="Experience and Education">
+  <div class="section-container">
+    <div class="section-header reveal-item">
+      <span class="section-kicker">04 // Background</span>
+      <h2 class="section-title">Experience &amp; Education</h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle">
+        Milestones in public-sector information technology and academic training.
+      </p>
+    </div>
+
+    <div class="timeline-container">
+      <div class="timeline-spine" aria-hidden="true"></div>
+
+      {% for item in timeline %}
+        <div class="timeline-item reveal-item timeline-{{ item.type }}">
+          <div class="timeline-marker" aria-hidden="true">
+            {% if item.type == 'experience' %}
+              <i class="fa-solid fa-briefcase"></i>
+            {% else %}
+              <i class="fa-solid fa-graduation-cap"></i>
+            {% endif %}
+          </div>
+
+          <div class="timeline-content-card">
+            <div class="timeline-card-header">
+              <span class="timeline-badge">{{ item.badge }}</span>
+              <span class="timeline-period"><i class="fa-regular fa-calendar-days"></i> {{ item.period }}</span>
+            </div>
+
+            <h3 class="timeline-role">{{ item.role }}</h3>
+            <h4 class="timeline-org">
+              <i class="fa-solid fa-building"></i>
+              {{ item.organization }}
+            </h4>
+            <p class="timeline-loc"><i class="fa-solid fa-location-dot"></i> {{ item.location }}</p>
+
+            <p class="timeline-desc">{{ item.description }}</p>
+
+            <ul class="timeline-highlights">
+              {% for highlight in item.highlights %}
+                <li>
+                  <i class="fa-solid fa-check" aria-hidden="true"></i>
+                  <span>{{ highlight }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     6. CONTACT SECTION
+========================================================= -->
+<section id="contact" class="contact-section section-padding" aria-label="Contact Section">
+  <div class="section-container">
+    <div class="section-header reveal-item">
+      <span class="section-kicker">05 // Let's Connect</span>
+      <h2 class="section-title">Get in Touch</h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle">
+        Have a project idea, question, or opportunity? Drop me a message below or reach out directly.
+      </p>
+    </div>
+
+    <div class="contact-grid">
+      <!-- Contact Info Cards -->
+      <div class="contact-info-column reveal-item">
+        <div class="contact-card">
+          <div class="contact-card-icon">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div class="contact-card-details">
+            <span class="card-subtitle">Email Me</span>
+            <a href="mailto:{{ owner.email }}" class="card-main-link">{{ owner.email }}</a>
+          </div>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-card-icon">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          <div class="contact-card-details">
+            <span class="card-subtitle">Location</span>
+            <span class="card-main-text">{{ owner.location }}</span>
+          </div>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-card-icon">
+            <i class="fa-solid fa-building-user"></i>
+          </div>
+          <div class="contact-card-details">
+            <span class="card-subtitle">Current Workplace</span>
+            <span class="card-main-text">{{ owner.company }}</span>
+          </div>
+        </div>
+
+        <!-- Social Channels -->
+        <div class="contact-socials-box">
+          <h3 class="socials-box-title">Social Profiles</h3>
+          <div class="social-links-grid">
+            <a href="{{ owner.github }}" target="_blank" rel="noopener noreferrer" class="social-chip">
+              <i class="fa-brands fa-github"></i>
+              <span>GitHub</span>
+            </a>
+            <a href="{{ owner.linkedin }}" target="_blank" rel="noopener noreferrer" class="social-chip">
+              <i class="fa-brands fa-linkedin-in"></i>
+              <span>LinkedIn</span>
+            </a>
+            <a href="mailto:{{ owner.email }}" class="social-chip">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Direct Mail</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="contact-form-column reveal-item">
+        <form action="{{ url_for('contact') }}" method="POST" class="contact-form" id="contact-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contact-name" class="form-label">Full Name <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <i class="fa-regular fa-user input-icon" aria-hidden="true"></i>
+                <input type="text" id="contact-name" name="name" class="form-input" placeholder="e.g. Juan Dela Cruz" required minlength="2">
+              </div>
+              <span class="error-feedback" id="name-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="contact-email" class="form-label">Email Address <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <i class="fa-regular fa-envelope input-icon" aria-hidden="true"></i>
+                <input type="email" id="contact-email" name="email" class="form-input" placeholder="e.g. juan@example.com" required>
+              </div>
+              <span class="error-feedback" id="email-error"></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="contact-subject" class="form-label">Subject</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-pen-to-square input-icon" aria-hidden="true"></i>
+              <input type="text" id="contact-subject" name="subject" class="form-input" placeholder="e.g. Web Development Inquiry / Project Collaboration">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="contact-message" class="form-label">Message <span class="required">*</span></label>
+            <div class="input-wrapper textarea-wrapper">
+              <i class="fa-regular fa-comment-dots input-icon textarea-icon" aria-hidden="true"></i>
+              <textarea id="contact-message" name="message" class="form-textarea" rows="5" placeholder="Share the details of your inquiry or project..." required minlength="10"></textarea>
+            </div>
+            <span class="error-feedback" id="message-error"></span>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block submit-btn" id="submit-btn">
+            <span class="btn-text">Send Message</span>
+            <i class="fa-solid fa-paper-plane btn-icon" aria-hidden="true"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
