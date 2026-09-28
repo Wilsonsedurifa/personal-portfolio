@@ -1,6 +1,6 @@
-# Flask Project
+# Portfolio Wilson
 
-A simple web application built using [Flask](https://flask.palletsprojects.com/).
+Personal portfolio web application built with [Flask](https://flask.palletsprojects.com/).
 
 ## Features
 
@@ -17,8 +17,8 @@ A simple web application built using [Flask](https://flask.palletsprojects.com/)
 
 1. **Clone the repository:**
    ```bash
-   git clone <YOUR_REPOSITORY_URL>
-   cd flask_project
+   git clone https://github.com/<YOUR-USERNAME>/portfolio-wilson.git
+   cd portfolio-wilson
    ```
 
 2. **Create and activate a virtual environment:**
