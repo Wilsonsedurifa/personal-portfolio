@@ -1,4 +1,4 @@
-# Portfolio Wilson
+# Personal Portfolio
 
 Personal portfolio web application built with [Flask](https://flask.palletsprojects.com/).
 
@@ -17,8 +17,8 @@ Personal portfolio web application built with [Flask](https://flask.palletsproje
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/<YOUR-USERNAME>/portfolio-wilson.git
-   cd portfolio-wilson
+   git clone https://github.com/Wilsonsedurifa/personal-portfolio.git
+   cd flask_project
    ```
 
 2. **Create and activate a virtual environment:**
