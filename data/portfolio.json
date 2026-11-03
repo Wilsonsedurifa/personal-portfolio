@@ -1,0 +1,20 @@
+{
+  "owner":{"name":"Wilson Brobo Sedurifa","email":"TODO: your-email@example.com","github":"TODO: github-url","linkedin":"TODO: linkedin-url"},
+  "chapters":[
+    {"id":"intro","label":"INTRO","title":"HELLO,","accent":"I'M WILSON.","description":"IT Staff and web developer building practical systems with clear, useful interfaces.","screen":"terminal"},
+    {"id":"about","label":"ABOUT","title":"ROOTED IN","accent":"REAL SERVICE.","description":"From Tibig, Bulakan — building for people and processes at the Provincial Information Technology Office of Bulacan.","screen":"profile"},
+    {"id":"stack","label":"STACK","title":"TOOLS THAT","accent":"MOVE IDEAS.","description":"A practical stack for web systems, mobile applications, and structured data.","screen":"stack"},
+    {"id":"scholarship-system","label":"PROJECT 01","title":"SLOTS MADE","accent":"VISIBLE.","description":"A Django staff portal for scholarship slot management by municipality, district, and education level.","project_id":"scholarship-system"},
+    {"id":"task-tracker","label":"PROJECT 02","title":"WORK, MADE","accent":"TRACKABLE.","description":"A Laravel and MySQL task management app for focused day-to-day workflows.","project_id":"task-tracker"},
+    {"id":"gastos-tracker","label":"PROJECT 03","title":"MONEY, MADE","accent":"LEGIBLE.","description":"A Flutter expense and budget tracker designed for at-a-glance personal finance habits.","project_id":"gastos-tracker"},
+    {"id":"wired-crm","label":"PROJECT 04","title":"CONNECTIONS","accent":"IN PROGRESS.","description":"A Laravel source system that syncs accounts with a field collector app.","project_id":"wired-crm"},
+    {"id":"experience","label":"EXPERIENCE","title":"LEARNING BY","accent":"BUILDING.","description":"Web Developer Intern, Aug–Dec 2025. IT Staff / Web Developer, 2026–present.","screen":"experience"},
+    {"id":"contact","label":"CONTACT","title":"LET'S BUILD","accent":"SOMETHING.","description":"Have a system that deserves a clear, useful interface? Let’s start a conversation.","screen":"contact"}
+  ],
+  "projects":[
+    {"id":"scholarship-system","name":"ScholarshipSystem","url":"scholarship-system.local","problem":"TODO: describe the staff workflow problem.","solution":"Django portal for scholarship-slot management.","result":"TODO: describe the practical result.","chips":["Django","Python","MySQL"],"demo":"TODO: live-demo-url","github":"TODO: github-url","screenshots":[]},
+    {"id":"task-tracker","name":"Task Tracker","url":"task-tracker.local","problem":"TODO: describe the task workflow problem.","solution":"Laravel and MySQL task management app.","result":"TODO: describe the practical result.","chips":["Laravel","PHP","MySQL"],"demo":"TODO: live-demo-url","github":"TODO: github-url","screenshots":[]},
+    {"id":"gastos-tracker","name":"GastosTracker","url":"gastos-tracker.app","problem":"TODO: describe the budgeting problem.","solution":"Flutter tracker for expenses and budgets.","result":"TODO: describe the practical result.","chips":["Flutter","Dart","Mobile"],"demo":"TODO: live-demo-url","github":"TODO: github-url","screenshots":[]},
+    {"id":"wired-crm","name":"WIRED CRM","url":"wired-crm.local","problem":"TODO: describe the account-sync problem.","solution":"Laravel source system for account synchronization.","result":"TODO: describe the practical result.","chips":["Laravel","PHP","In progress"],"demo":"TODO: live-demo-url","github":"TODO: github-url","screenshots":[]}
+  ]
+}

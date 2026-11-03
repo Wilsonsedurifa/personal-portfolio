@@ -1,0 +1,22 @@
+{% for project in projects %}{% if project.story %}
+<dialog class="story-book" id="story-{{ project.id }}" aria-labelledby="story-title-{{ project.id }}">
+  <div class="book-environment">
+    <div class="book-topline"><span>PROJECT FIELD NOTES / {{ '%02d'|format(project.story|length) }} CHAPTERS</span><button class="book-close" type="button" aria-label="Close book">Close <span aria-hidden="true">×</span></button></div>
+    <div class="physical-book">
+      <div class="book-cover-under" aria-hidden="true"></div><div class="book-page-edges" aria-hidden="true"></div>
+      <div class="book-interior">
+        <aside class="book-index paper"><p class="book-eyebrow">PROJECT FIELD NOTES</p><h2 id="story-title-{{ project.id }}">{{ project.book.title }}</h2><p class="book-tagline">{{ project.book.subtitle }}</p><div class="book-ornament" aria-hidden="true">✧</div><p class="book-index-label">THE STORY</p><nav aria-label="Chapter index">{% for chapter in project.story %}<button type="button" data-book-go="{{ loop.index0 }}" aria-pressed="{{ 'true' if loop.first else 'false' }}"><small>{{ '%02d'|format(loop.index) }}</small><span>{{ chapter.title }}</span></button>{% endfor %}</nav><div class="book-credit"><span>{{ project.book.author_name }}</span><p>{{ project.book.author_role }}</p></div></aside>
+        <div class="book-reading paper"><div class="book-pages">{% for chapter in project.story %}<article class="book-chapter" data-book-page="{{ loop.index0 }}" {% if not loop.first %}hidden{% endif %} tabindex="0" aria-label="{{ chapter.title }}"><div class="book-page-heading"><p>CHAPTER {{ '%02d'|format(loop.index) }}</p><h3>{{ chapter.title }}</h3><div class="book-ornament" aria-hidden="true">— ✧ —</div><p class="book-subtitle">{{ chapter.subtitle }}</p></div><div class="book-story">{{ chapter.story|story_markup }}</div>{% if chapter.highlights %}<ul class="book-highlights">{% for highlight in chapter.highlights %}<li>{{ highlight }}</li>{% endfor %}</ul>{% endif %}{% if chapter.decisions %}<div class="book-decisions">{% for item in chapter.decisions %}<section><h4>{{ item.challenge }}</h4><p>{{ item.decision }}</p></section>{% endfor %}</div>{% endif %}{% if chapter.code_example %}<pre class="book-code"><code>{{ chapter.code_example }}</code></pre>{% endif %}{% if chapter.image %}<figure><img src="{{ url_for('static',filename=chapter.image) }}" alt="{{ chapter.screenshot_caption or chapter.title }}" loading="lazy"><figcaption>{{ chapter.screenshot_caption }}</figcaption></figure>{% endif %}{% for image in chapter.images|default([]) %}<figure><img src="{{ url_for('static',filename=image.path) }}" alt="{{ image.caption or chapter.title }}" loading="lazy"><figcaption>{{ image.caption }}</figcaption></figure>{% endfor %}<p class="book-page-signature">{{ project.title }} <span>{{ '%02d'|format(loop.index) }}</span></p></article>{% endfor %}</div><span class="book-ribbon" aria-hidden="true"></span></div>
+      </div>
+      <div class="book-spine" aria-hidden="true"></div>
+      <div class="book-front-cover" aria-hidden="true"><div class="cover-front"><small>PROJECT FIELD NOTES</small><span class="cover-monogram">W<span>.</span>S</span><strong>{{ project.book.title }}</strong><p>{{ project.book.subtitle }}</p><span class="cover-author">{{ project.book.author_name }}</span></div><div class="cover-back"></div></div>
+      <div class="turning-sheet" aria-hidden="true"><div class="sheet-face sheet-front paper"></div><div class="sheet-face sheet-back paper"><span class="sheet-ornament">✧</span></div></div>
+      <button class="book-cover-trigger" type="button" aria-label="Open {{ project.book.title }} book"></button>
+    </div>
+    <div class="book-navigation"><button class="mobile-index-toggle" type="button" aria-expanded="false">Chapters ☰</button><button type="button" data-book-prev>← Previous</button><span class="book-counter" aria-live="polite">01 / {{ '%02d'|format(project.story|length) }}</span><button type="button" data-book-next>Next chapter →</button></div>
+    <div class="book-reading-status"><span class="book-reading-position">Start of chapter</span><div class="book-reading-track" aria-hidden="true"><i></i></div><span>PROJECT FIELD NOTES</span></div>
+    <p class="book-reading-hint">Scroll within the paper to read · Arrow keys to turn · Esc to close</p>
+  </div>
+</dialog>{% endif %}{% endfor %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/story-book.css') }}">
+<script src="{{ url_for('static',filename='js/story-book.js') }}" defer></script>

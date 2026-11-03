@@ -1,0 +1,84 @@
+[
+  {
+    "order": 1,
+    "title": "The Problem",
+    "subtitle": "Turning a fragmented scholarship workflow into one reliable system",
+    "story": "Scholarship applications often involve repeated encoding, incomplete requirements, manual status checking, and delayed communication between applicants and staff. The ScholarshipSystem was built to centralize this journey—from application and document submission to screening, examination, scholar management, and payroll preparation. The goal was to give applicants a clear self-service portal while giving staff a more organized and traceable workspace.",
+    "screenshot_caption": "Applicant and staff workflows brought together in one scholarship platform."
+  },
+  {
+    "order": 2,
+    "title": "My Role",
+    "subtitle": "Backend Developer & Systems Analyst",
+    "story": "I worked on translating workflow requirements into backend rules, database relationships, and staff-facing processes. My contribution focused on analyzing how application data moves through the system, designing structured models for applicant information and related records, and implementing logic for validation, document handling, status updates, and operational modules. The team collaborated on the full product, while I concentrated on the backend architecture and the system decisions that keep the workflow consistent.",
+    "screenshot_caption": "My work connected business rules, data models, and portal actions."
+  },
+  {
+    "order": 3,
+    "title": "Planning the System",
+    "subtitle": "Designing the flow before writing the features",
+    "story": "I mapped the scholarship process into clear states: application submission, verification, document completion, examination, evaluation, scholar onboarding, renewal, and payroll preparation. The data model separates an applicant's core profile from contact details, family background, uploaded documents, examination records, notifications, and scholar records. This structure makes the system easier to maintain and lets each workflow preserve the information it needs without duplicating data.",
+    "highlights": [
+      "Mapped applicant-to-scholar lifecycle and status transitions",
+      "Designed related models for personal, contact, and family information",
+      "Planned document requirements and verification states",
+      "Considered role-based workflows for applicants, staff, and administrators"
+    ],
+    "screenshot_caption": "A structured data model supports each stage of the scholarship lifecycle."
+  },
+  {
+    "order": 4,
+    "title": "Building the Backend",
+    "subtitle": "Converting real workflow rules into reusable modules",
+    "story": "The backend was developed in Django and organized around focused modules. The applicant flow supports profile collection, duplicate checks, OTP and ID verification, and document submission. Staff modules cover slot management, exam scheduling and attendance, scholar records, renewal tracking, notifications, and payroll account processing. I also worked with configurable data such as custom applicant fields and document requirements so administrators can adapt parts of the process without changing source code.",
+    "highlights": [
+      "Applicant profile and family-information models",
+      "Server-side duplicate detection and verification flow",
+      "Document requirement, upload, review, and notification logic",
+      "Exam schedules, QR passes, attendance, and result handling",
+      "Scholar records, renewal workflows, and payroll-account requests",
+      "Configurable custom fields for applicant data collection"
+    ],
+    "code_example": "class CustomField(models.Model):\n    target_model = models.CharField(max_length=50, choices=TARGET_MODELS)\n    field_name = models.CharField(max_length=100)\n    field_type = models.CharField(max_length=20, choices=FIELD_TYPES)\n    is_required = models.BooleanField(default=False)\n    is_active = models.BooleanField(default=True)\n    order = models.PositiveIntegerField(default=0)",
+    "screenshot_caption": "Configurable custom fields allow the application form to evolve without hard-coding every new requirement."
+  },
+  {
+    "order": 5,
+    "title": "Challenges & Decisions",
+    "subtitle": "Making the workflow strict where it matters and flexible where it helps",
+    "story": "One challenge was preventing duplicate or invalid applications without making the application experience unnecessarily difficult. I approached this by placing validation in sequence: check for duplicates first, then continue to verification steps before saving the application. Another challenge was that scholarship requirements can change over time. Instead of treating every field and document as fixed, the system uses configurable requirements and custom fields. For sensitive data such as payroll account details, changes are handled as reviewable requests instead of direct overwrites.",
+    "decisions": [
+      {
+        "challenge": "Duplicate or incomplete applications",
+        "decision": "Validate duplicate records before expensive verification and before creating an application record."
+      },
+      {
+        "challenge": "Changing form and document requirements",
+        "decision": "Use admin-configurable custom fields and document requirements."
+      },
+      {
+        "challenge": "Sensitive scholar information",
+        "decision": "Use approval workflows and history-aware records for important changes."
+      },
+      {
+        "challenge": "Staff coordination and applicant updates",
+        "decision": "Support in-app notifications, email templates, and support workflows."
+      }
+    ],
+    "screenshot_caption": "Workflow rules protect data quality while keeping operations adaptable."
+  },
+  {
+    "order": 6,
+    "title": "What I Learned",
+    "subtitle": "Better systems start with understanding the people using them",
+    "story": "This project strengthened my approach to backend development as systems thinking, not only feature building. I learned that a good data model must reflect real processes, edge cases, and future changes. I also became more deliberate about validation order, auditability, role-based access, and making administrative tools flexible enough for non-developers. Most importantly, I learned to turn a complex, human workflow into smaller, testable, and maintainable parts.",
+    "highlights": [
+      "Analyze the process before designing database tables",
+      "Treat validation and workflow states as product decisions",
+      "Build configuration tools for requirements that change",
+      "Protect sensitive actions with approval and history flows",
+      "Design backend modules around clear responsibilities"
+    ],
+    "screenshot_caption": "The project shaped a more practical, process-focused approach to backend engineering."
+  }
+]

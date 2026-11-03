@@ -1,0 +1,28 @@
+{% extends 'layouts/admin.html' %}
+{% block content %}
+<section class="login-experience">
+  <aside class="login-art" aria-label="Wilson portfolio workspace">
+    <p class="login-eyebrow"><span></span> WILSON SEDURIFA / WORKSPACE</p>
+    <div class="login-orbit" aria-hidden="true"><div class="orbit-ring ring-one"></div><div class="orbit-ring ring-two"></div><div class="orbit-core">W<span>.</span>S</div><i class="orbit-point"></i></div>
+    <div class="login-art-copy"><span class="login-chapter">01 / THE CONTROL ROOM</span><h1>Good work<br>starts <em>here.</em></h1><p>Your projects. Your progress.<br>A space to shape what comes next.</p></div>
+    <p class="login-art-footer">PERSONAL PORTFOLIO <span>EST. 2026</span></p>
+  </aside>
+  <div class="login-panel">
+    <div class="login-panel-content">
+      <div class="login-lock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14v3"/></svg></div>
+      <p class="login-eyebrow">OWNER ACCESS</p>
+      <h2>Welcome back<span>.</span></h2><p class="login-subtitle">A little behind-the-scenes.<br>Sign in to manage your portfolio.</p>
+      {% if not configured %}<p class="notice">Create your owner account first using the create-admin command in the README.</p>{% else %}
+      <form method="post" class="login-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <label for="login-username">Username<input id="login-username" name="username" autocomplete="username" placeholder="Enter your username" required></label>
+        <label for="login-password">Password<input id="login-password" type="password" name="password" autocomplete="current-password" placeholder="Enter your password" required></label>
+        <p class="login-private"><span aria-hidden="true">◈</span> Private workspace. Just for you.</p>
+        <button class="primary login-submit">Enter workspace <span aria-hidden="true">↗</span></button>
+      </form>{% endif %}
+      <a class="login-back" href="{{ url_for('home') }}">← Back to portfolio</a>
+    </div>
+    <p class="login-panel-footer">BUILD. REFINE. REPEAT.</p>
+  </div>
+</section>
+{% endblock %}

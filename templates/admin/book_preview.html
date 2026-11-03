@@ -1,0 +1,1 @@
+{% extends 'layouts/admin.html' %}{% block content %}<h1>Private book preview</h1><p>Includes saved draft chapters. Public visitors only see enabled books and published chapters.</p><button type="button" class="primary" data-story-open="story-{{ project.id }}">Open {{ project.book.title }}</button>{% include 'components/story_book.html' %}{% endblock %}
