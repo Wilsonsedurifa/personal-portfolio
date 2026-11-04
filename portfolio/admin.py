@@ -74,8 +74,9 @@ def init_admin(app):
     app.jinja_env.filters['story_markup'] = render_story
     instance = Path(app.instance_path)
     secret = os.environ.get('SECRET_KEY')
-    # POSTGRES_* takes precedence when present, matching common Django setups.
-    database_url = postgres_url_from_environment() or os.environ.get('DATABASE_URL', '')
+    # A complete URI takes precedence, which keeps local migrations aligned
+    # with the same cloud database configured for deployment.
+    database_url = os.environ.get('DATABASE_URL', '') or postgres_url_from_environment()
     # ``database-server`` is the example hostname in .env.example.  Do not try
     # to contact it during local development: use the bundled SQLite database
     # until a real PostgreSQL URL is supplied.
