@@ -246,6 +246,8 @@ def init_admin(app):
                     image = primary
                 elif image in remove:
                     image = ''
+                if not image and gallery:
+                    image = gallery[0]
             if not error:
                 if request.form.get('remove_image') == 'on' and not (upload and upload.filename):
                     image = ''
