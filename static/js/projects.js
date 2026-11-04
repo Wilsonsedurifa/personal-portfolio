@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const interfaceStage = section.querySelector('#interface-stage');
   const systemStage = section.querySelector('#system-stage');
   const systemArticles = [...section.querySelectorAll('[data-system-index]')];
+  const galleryControls = section.querySelector('.gallery-controls');
+  const scrollNote = section.querySelector('.screen-scroll-note');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const imageCounter = section.querySelector('#image-counter');
   const positions = screens.map(() => 0);
@@ -83,17 +85,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function prepare(image) {
-    if (!image) return;
+    if (!image) return false;
     image.loading = 'eager';
-    try { await image.decode(); image.classList.remove('image-error'); }
-    catch { image.classList.add('image-error'); }
+    try {
+      await image.decode();
+      image.classList.remove('image-error');
+      return true;
+    } catch {
+      image.closest('.project-image-scroll')?.remove();
+      return false;
+    }
   }
 
 
   function updateControls() {
     const images = [...screens[selected].querySelectorAll('.project-slide')];
     expand.disabled=!images.length;
-    imageCounter.textContent = images.length ? `${positions[selected] + 1} / ${images.length} screenshots` : 'Cover image not yet uploaded';
+    expand.hidden = !images.length;
+    galleryControls.hidden = !images.length;
+    scrollNote.hidden = !images.length;
+    if (images.length) positions[selected] %= images.length;
+    imageCounter.textContent = `${positions[selected] + 1} / ${images.length} screenshots`;
     section.querySelectorAll('[data-image-prev],[data-image-next]').forEach(button => button.disabled = images.length < 2);
     section.querySelector('#project-counter').textContent = `${String(selected + 1).padStart(2,'0')} / ${String(screens.length).padStart(2,'0')}`;
     section.querySelectorAll('[data-project-index]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.projectIndex) === selected)));
@@ -157,10 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) select(selected + (dx < 0 ? 1 : -1));
   }, {passive:true});
 
-  section.querySelectorAll('.project-slide').forEach(image => image.addEventListener('error', () => image.classList.add('image-error')));
-  prepare(screens[0].querySelector('img'));
+  section.querySelectorAll('.project-slide').forEach(image => image.addEventListener('error', () => {
+    image.closest('.project-image-scroll')?.remove();
+    updateControls();
+  }));
   screens.forEach((screen,index) => { screen.inert = index !== 0; });
-  updateControls();
+  Promise.all([...section.querySelectorAll('.project-slide')].map(prepare)).finally(updateControls);
   // Scroll owns the outer camera; project switching owns the inner laptop.
   // Separate transform layers avoid animation collisions and reverse naturally.
   if (!reduced.matches) {
