@@ -1,6 +1,7 @@
 """Small DB-API bridge: PostgreSQL in production, SQLite for local previews."""
 from contextlib import contextmanager
 import sqlite3
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from flask import current_app
 
 
@@ -26,13 +27,23 @@ class Database:
         return {row['name'] for row in self.execute('PRAGMA table_info(projects)').fetchall()}
 
 
+def psycopg_connection_url(url):
+    """Remove URI flags understood by poolers but not by psycopg itself."""
+    parsed = urlsplit(url)
+    query = [(key, value) for key, value in parse_qsl(parsed.query, keep_blank_values=True)
+             if key != 'pgbouncer']
+    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path,
+                       urlencode(query, doseq=True), parsed.fragment))
+
+
 @contextmanager
 def connect():
     url = current_app.config.get('DATABASE_URL', '')
     if url:
         import psycopg
         from psycopg.rows import dict_row
-        raw = psycopg.connect(url, row_factory=dict_row, connect_timeout=10, prepare_threshold=None)
+        raw = psycopg.connect(psycopg_connection_url(url), row_factory=dict_row,
+                              connect_timeout=10, prepare_threshold=None)
     else:
         raw = sqlite3.connect(current_app.config['DATABASE'])
         raw.row_factory = sqlite3.Row
