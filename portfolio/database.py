@@ -29,6 +29,11 @@ class Database:
 
 def psycopg_connection_url(url):
     """Remove URI flags understood by poolers but not by psycopg itself."""
+    url = url.strip()
+    if url.startswith('DATABASE_URL='):
+        url = url.split('=', 1)[1]
+    if len(url) >= 2 and url[0] == url[-1] and url[0] in "\"'":
+        url = url[1:-1]
     # Supabase displays a URI template and its database password can contain
     # URL-reserved characters. Encode only the password portion before parsing
     # the URI, while preserving an already percent-encoded password.
