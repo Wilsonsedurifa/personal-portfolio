@@ -5,7 +5,7 @@ import os
 import secrets
 import sqlite3
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import quote, urlencode, urlparse
 
 import click
 from flask import abort, current_app, flash, redirect, render_template, request, session, url_for
@@ -15,6 +15,22 @@ from .book_content import render_story
 
 
 from .database import connect
+
+
+def postgres_url_from_environment():
+    """Build a psycopg connection URL from Django-style POSTGRES_* settings."""
+    keys = ('POSTGRES_DB', 'POSTGRES_USER', 'POSTGRES_PASSWORD', 'POSTGRES_HOST', 'POSTGRES_PORT')
+    if not any(os.environ.get(key) for key in keys):
+        return ''
+
+    database = os.environ.get('POSTGRES_DB', 'scholarshipdb')
+    user = os.environ.get('POSTGRES_USER', 'postgres')
+    password = os.environ.get('POSTGRES_PASSWORD', '1234')
+    host = os.environ.get('POSTGRES_HOST', 'localhost')
+    port = os.environ.get('POSTGRES_PORT', '5432')
+    sslmode = os.environ.get('POSTGRES_SSLMODE', '')
+    query = f'?{urlencode({"sslmode": sslmode})}' if sslmode else ''
+    return f'postgresql://{quote(user, safe="")}:{quote(password, safe="")}@{host}:{port}/{quote(database, safe="")}{query}'
 
 
 def project_list(published_only=False):
@@ -58,11 +74,17 @@ def init_admin(app):
     app.jinja_env.filters['story_markup'] = render_story
     instance = Path(app.instance_path)
     secret = os.environ.get('SECRET_KEY')
-    database_url = os.environ.get('DATABASE_URL', '')
+    # POSTGRES_* takes precedence when present, matching common Django setups.
+    database_url = postgres_url_from_environment() or os.environ.get('DATABASE_URL', '')
+    # ``database-server`` is the example hostname in .env.example.  Do not try
+    # to contact it during local development: use the bundled SQLite database
+    # until a real PostgreSQL URL is supplied.
+    if not os.environ.get('VERCEL') and urlparse(database_url).hostname == 'database-server':
+        database_url = ''
     if database_url and not database_url.startswith(('postgresql://', 'postgres://')):
-        raise RuntimeError('DATABASE_URL must be a PostgreSQL connection URL.')
+        raise RuntimeError('PostgreSQL configuration must produce a PostgreSQL connection URL.')
     if os.environ.get('VERCEL') and (not secret or not database_url):
-        raise RuntimeError('Set SECRET_KEY and DATABASE_URL before deploying.')
+        raise RuntimeError('Set SECRET_KEY and PostgreSQL configuration before deploying.')
     if not secret:
         instance.mkdir(parents=True, exist_ok=True)
         keyfile = instance / 'session.key'
@@ -370,12 +392,12 @@ def initialize_database(seed=True):
         if not seed:
             return
         if not db.execute("SELECT 1 FROM metadata WHERE key='imported'").fetchone():
-            data = json.loads((Path(app.root_path)/'data/portfolio.json').read_text(encoding='utf-8'))
+            data = json.loads((Path(current_app.root_path)/'data/portfolio.json').read_text(encoding='utf-8'))
             for p in data.get('projects', []):
                 db.execute('INSERT INTO projects(title,description,technologies,status,published) VALUES(?,?,?,?,?)', (p['name'], p.get('solution',''), ', '.join(p.get('chips',[])), 'In progress' if p['id']=='wired-crm' else 'Planned', 0))
             db.execute("INSERT INTO metadata VALUES('imported')")
         if not db.execute("SELECT 1 FROM metadata WHERE key='scholarship_story_v1'").fetchone():
-            story_path = Path(app.root_path)/'data/scholarship_story.json'
+            story_path = Path(current_app.root_path)/'data/scholarship_story.json'
             story = json.loads(story_path.read_text(encoding='utf-8'))
             db.execute("UPDATE projects SET story=? WHERE lower(replace(title,' ',''))='scholarshipsystem' AND story='[]'", (json.dumps(story),))
             db.execute("INSERT INTO metadata VALUES('scholarship_story_v1')")

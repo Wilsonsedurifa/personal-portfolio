@@ -1,13 +1,13 @@
 # PostgreSQL setup
 
-The app uses PostgreSQL when `DATABASE_URL` is set. Without it, local SQLite
-continues working. Existing SQLite data and uploaded files are not modified.
+The app uses PostgreSQL when the `POSTGRES_*` variables are set. Without them,
+local SQLite continues working. Existing SQLite data and uploaded files are not modified.
 
 1. Install dependencies: `python -m pip install -r requirements.txt`.
 2. Copy `.env.example` to `.env` in `flask_project`.
-3. Set `DATABASE_URL` to your provider's PostgreSQL connection string. Keep the
-   provider's SSL parameters (for example `?sslmode=require`). A pooled connection
-   URL is suitable for serverless deployments. Use a separate database for tests.
+3. Set `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and
+   `POSTGRES_PORT`. For hosted PostgreSQL, also set `POSTGRES_SSLMODE=require`.
+   Use a separate database for tests.
 4. Set `SECRET_KEY` to a stable random value. Generate one with
    `python -c "import secrets; print(secrets.token_hex(32))"`.
 5. Keep `AUTO_INIT_DB=0`, then choose ONE initialization path:
@@ -28,7 +28,7 @@ Run locally with `python app.py`.
 
 ## Vercel deployment boundaries
 
-Set `DATABASE_URL` and `SECRET_KEY` in the deployment environment. Vercel startup
+Set the `POSTGRES_*` variables and `SECRET_KEY` in the deployment environment. Vercel startup
 requires both, enables secure cookies, and never writes a session-key file or runs
 schema migrations during a cold start. Run `init-db` locally against the destination
 before deployment. Keep all connection strings out of Git and screenshots.
