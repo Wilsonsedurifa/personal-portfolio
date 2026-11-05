@@ -6,6 +6,19 @@ depending on the private admin database.
 
 FEATURED_PROJECTS = [
     {
+        "id": "fficol-field-collection-platform",
+        "title": "Fficol Field Collection Platform",
+        "status": "In progress",
+        "description": "A Python-based field collection platform project, built to support a more organized collection workflow.",
+        "technologies": "Python, Field collection platform",
+        "github": "https://github.com/Wilsonsedurifa/Fficol-field-collection-platform",
+        "demo": "",
+        "image": "",
+        "screenshots": [],
+        "story": [],
+        "book": {"author_role": "Python project"},
+    },
+    {
         "id": "scholarship-system",
         "title": "ScholarshipSystem",
         "status": "In progress",
@@ -20,7 +33,7 @@ FEATURED_PROJECTS = [
     },
     {
         "id": "simple-task-tracker",
-        "title": "Simple Task Tracker",
+        "title": "Task Tracker",
         "status": "Completed",
         "description": "A task-management web app for organizing day-to-day work with a focused, straightforward workflow.",
         "technologies": "JavaScript, Web application",
