@@ -1,5 +1,5 @@
 {
-  "owner":{"name":"Wilson Brobo Sedurifa","email":"TODO: your-email@example.com","github":"TODO: github-url","linkedin":"TODO: linkedin-url"},
+  "owner":{"name":"Wilson Brobo Sedurifa","email":"TODO: your-email@example.com","github":"https://github.com/Wilsonsedurifa","linkedin":"TODO: linkedin-url"},
   "chapters":[
     {"id":"intro","label":"INTRO","title":"HELLO,","accent":"I'M WILSON.","description":"IT Staff and web developer building practical systems with clear, useful interfaces.","screen":"terminal"},
     {"id":"about","label":"ABOUT","title":"ROOTED IN","accent":"REAL SERVICE.","description":"From Tibig, Bulakan — building for people and processes at the Provincial Information Technology Office of Bulacan.","screen":"profile"},

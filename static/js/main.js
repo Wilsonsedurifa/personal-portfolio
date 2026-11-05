@@ -53,7 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function setup() {
     cancelAnimationFrame(frame);
-    if (reduced.matches) return;
+    // On a small touch screen, keep the introduction in normal document flow.
+    // It prevents the scroll-pinned scene from hiding content behind the browser UI.
+    if (reduced.matches || innerWidth <= 760) return;
     document.body.classList.add('motion-ready');
     displayed = clamp((scrollY - journey.offsetTop) / Math.max(1, journey.offsetHeight - innerHeight));
     if (displayed < .05) {

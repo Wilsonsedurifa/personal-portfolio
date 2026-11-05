@@ -177,7 +177,9 @@ document.addEventListener('DOMContentLoaded', () => {
   Promise.all([...section.querySelectorAll('.project-slide')].map(prepare)).finally(updateControls);
   // Scroll owns the outer camera; project switching owns the inner laptop.
   // Separate transform layers avoid animation collisions and reverse naturally.
-  if (!reduced.matches) {
+  // The 3D scroll choreography is desktop-only. Mobile keeps a stable preview
+  // and lets touch interaction focus on selecting projects and reading details.
+  if (!reduced.matches && innerWidth > 760) {
     const heading=section.querySelector('.showcase-top');
     const selector=section.querySelector('.project-selector');
     const bottom=section.querySelector('.showcase-bottom');

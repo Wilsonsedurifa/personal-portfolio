@@ -4,6 +4,7 @@ from pathlib import Path
 from flask import Flask, render_template
 from dotenv import load_dotenv
 from .admin import init_admin, project_list
+from .featured_projects import FEATURED_PROJECTS
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(PROJECT_ROOT / '.env')
@@ -21,7 +22,14 @@ def load_portfolio():
 @app.route("/")
 def home():
     portfolio = load_portfolio()
-    portfolio['projects'] = project_list(published_only=True)
+    # Keep public, versioned project details as the primary content while still
+    # allowing newly published projects from the owner portal to appear.
+    featured_titles = {project['title'] for project in FEATURED_PROJECTS}
+    admin_projects = [
+        project for project in project_list(published_only=True)
+        if project['title'] not in featured_titles
+    ]
+    portfolio['projects'] = [*FEATURED_PROJECTS, *admin_projects]
     return render_template("portfolio/index.html", **portfolio)
 
 
