@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ticket !== requestId || index !== selected) return;
     positions[index] = next;
     images.forEach((image,i) => image.classList.toggle('is-visible',i === next));
+    animate(images[next], [{opacity:0,transform:'scale(.975) translateY(10px)'},{opacity:1,transform:'scale(1) translateY(0)'}], {duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});
     updateControls();
   }
 

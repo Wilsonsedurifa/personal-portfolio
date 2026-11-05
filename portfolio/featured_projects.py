@@ -49,7 +49,11 @@ FEATURED_PROJECTS = [
         "github": "https://github.com/Wilsonsedurifa/simple-task-tracker",
         "demo": "https://simple-task-tracker-production.up.railway.app/",
         "image": "",
-        "screenshots": [],
+        "screenshots": [
+            "images/task-tracker-tasks-pending.jpg",
+            "images/task-tracker-tasks-all.jpg",
+            "images/task-tracker-dashboard.jpg",
+        ],
         "story": [],
         "book": {"author_role": "Full-stack project"},
     },
