@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const journey = document.querySelector('.journey');
   const scene = document.querySelector('.scene');
+  if (!journey || !scene) return;
   const hero = document.querySelector('.hero-copy');
   const about = document.querySelector('.about-copy');
   const laptop = document.querySelector('.laptop');

@@ -29,7 +29,12 @@ def home():
         project for project in project_list(published_only=True)
         if project['title'] not in featured_titles
     ]
-    portfolio['projects'] = [*FEATURED_PROJECTS, *admin_projects]
+    portfolio['projects'] = [project for project in [*FEATURED_PROJECTS, *admin_projects] if project.get('visible', True)]
     return render_template("portfolio/index.html", **portfolio)
+
+
+@app.route("/projects/scholarship-system")
+def scholarship_case_study():
+    return render_template("portfolio/scholarship_case_study.html")
 
 
