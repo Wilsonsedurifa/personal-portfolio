@@ -1,12 +1,22 @@
 // Scroll progress owns the lower chapters; the default HTML stays fully visible.
 document.addEventListener('DOMContentLoaded',()=>{
-  const toolkitIndex=document.querySelector('.toolkit-index');
-  if(toolkitIndex&&!toolkitIndex.querySelector('[data-tool="postgresql"]')){
-    const row=document.createElement('article');
-    row.dataset.tool='postgresql';
-    row.innerHTML='<span>08</span><h3>PostgreSQL</h3><p>ScholarshipSystem · structured data and relational workflows</p><b aria-hidden="true">↗</b>';
-    toolkitIndex.append(row);
-  }
+  const toolkitTargets=document.querySelectorAll('.toolkit-index [data-project-target]');
+  const activateProjectTarget=targetId=>{
+    const showcase=document.querySelector('#projects');
+    if(!showcase)return;
+    const button=showcase.querySelector(`.project-selector button[data-project-id="${targetId}"]`);
+    if(button)button.click();
+    showcase.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
+  };
+  toolkitTargets.forEach(row=>{
+    row.addEventListener('click',()=>activateProjectTarget(row.dataset.projectTarget));
+    row.addEventListener('keydown',event=>{
+      if(event.key==='Enter'||event.key===' '){
+        event.preventDefault();
+        activateProjectTarget(row.dataset.projectTarget);
+      }
+    });
+  });
   const reduced=matchMedia('(prefers-reduced-motion:reduce)');
   const sections=[...document.querySelectorAll('.chapter-section')];
   const clamp=value=>Math.max(0,Math.min(1,value));

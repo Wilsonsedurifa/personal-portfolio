@@ -1,16 +1,24 @@
 import json
 from pathlib import Path
 
-from flask import Flask, render_template
+from flask import Flask, Response, render_template
 from dotenv import load_dotenv
 from .admin import init_admin, project_list
-from .featured_projects import FEATURED_PROJECTS
+from .featured_projects import FEATURED_PROJECTS, SCHOLARSHIP_SCREENSHOTS
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(PROJECT_ROOT / '.env')
 app = Flask(__name__, root_path=str(PROJECT_ROOT), instance_path=str(PROJECT_ROOT / 'instance'))
 init_admin(app)
 DATA_PATH = PROJECT_ROOT / "data" / "portfolio.json"
+
+
+@app.after_request
+def apply_security_headers(response):
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    return response
 
 
 def load_portfolio():
@@ -35,6 +43,12 @@ def home():
 
 @app.route("/projects/scholarship-system")
 def scholarship_case_study():
-    return render_template("portfolio/scholarship_case_study.html")
+    return render_template("portfolio/scholarship_case_study.html", screenshots=SCHOLARSHIP_SCREENSHOTS)
+
+
+@app.route("/robots.txt")
+def robots_txt():
+    body = "User-agent: *\nAllow: /\nDisallow: /admin\n"
+    return Response(body, mimetype="text/plain")
 
 

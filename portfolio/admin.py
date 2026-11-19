@@ -4,6 +4,8 @@ import json
 import os
 import secrets
 import sqlite3
+import time
+from collections import defaultdict
 from pathlib import Path
 from urllib.parse import quote, urlencode, urlparse
 
@@ -76,7 +78,8 @@ def init_admin(app):
     secret = os.environ.get('SECRET_KEY')
     # A complete URI takes precedence, which keeps local migrations aligned
     # with the same cloud database configured for deployment.
-    database_url = os.environ.get('DATABASE_URL', '') or postgres_url_from_environment()
+    use_local_sqlite = not os.environ.get('VERCEL') and os.environ.get('PORTFOLIO_LOCAL_SQLITE') == '1'
+    database_url = '' if use_local_sqlite else (os.environ.get('DATABASE_URL', '') or postgres_url_from_environment())
     # ``database-server`` is the example hostname in .env.example.  Do not try
     # to contact it during local development: use the bundled SQLite database
     # until a real PostgreSQL URL is supplied.
@@ -143,15 +146,26 @@ def init_admin(app):
             db.execute('INSERT INTO admins(id,username,password) VALUES(1,?,?) ON CONFLICT(id) DO UPDATE SET username=excluded.username,password=excluded.password', (username.strip(), generate_password_hash(password)))
         click.echo('Admin login saved.')
 
+    login_failures = defaultdict(list)
+
     @app.route('/admin/login', methods=['GET','POST'])
     def admin_login():
         with connect() as db:
             admin = db.execute('SELECT * FROM admins WHERE id=1').fetchone()
         if request.method == 'POST':
+            client_ip = (request.headers.get('X-Forwarded-For', '').split(',')[0].strip() or request.remote_addr or 'local')
+            now = time.monotonic()
+            recent = [t for t in login_failures[client_ip] if now - t < 300]
+            login_failures[client_ip] = recent
+            if len(recent) >= 5 and not current_app.config.get('TESTING'):
+                flash('Too many failed sign-in attempts. Wait 5 minutes and try again.', 'error')
+                return render_template('admin/login.html', configured=bool(admin)), 429
             if admin and request.form.get('username') == admin['username'] and check_password_hash(admin['password'], request.form.get('password','')):
+                login_failures.pop(client_ip, None)
                 session.clear()
                 session['admin'] = True
                 return redirect(url_for('admin_dashboard'))
+            login_failures[client_ip].append(now)
             flash('Invalid username or password.', 'error')
         return render_template('admin/login.html', configured=bool(admin))
 

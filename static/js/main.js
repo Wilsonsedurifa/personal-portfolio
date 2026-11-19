@@ -34,10 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
     hero.inert = p > .4;
     about.inert = p < .5;
     // The incoming layer is fully painted under the outgoing layer.
-    editor.style.opacity = '1';
-    symbol.style.opacity = 1 - blend;
-    symbol.style.transform = `scale(${1 + blend * .08})`;
-    editor.style.transform = `scale(${1.035 - blend * .035})`;
+    if (editor) {
+      editor.style.opacity = '1';
+      editor.style.transform = `scale(${1.035 - blend * .035})`;
+    }
+    if (symbol) {
+      symbol.style.opacity = 1 - blend;
+      symbol.style.transform = `scale(${1 + blend * .08})`;
+    }
     laptop.style.opacity=1-departure*.9;
     laptop.style.transform = `rotateY(${-11 + blend * 16+departure*5}deg) rotateX(${7 + blend * 3}deg) translateY(${-blend * 20-departure*30}px) scale(${1-departure*.06})`;
     scene.style.setProperty('--light', .18 + blend * .15);
@@ -121,4 +125,50 @@ document.addEventListener('DOMContentLoaded', () => {
   navigation.querySelectorAll('a').forEach(link=>link.addEventListener('click',closeMenu));
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&toggle.getAttribute('aria-expanded')==='true'){closeMenu();toggle.focus();}});
   document.addEventListener('click',event=>{if(!event.target.closest('header'))closeMenu();});
+});
+// Active section indicator in the sticky navigation + one-click Copy Email.
+document.addEventListener('DOMContentLoaded', () => {
+  const navLinks = [...document.querySelectorAll('#primary-navigation a[href^="#"]')];
+  if (navLinks.length && 'IntersectionObserver' in window) {
+    const sections = navLinks
+      .map(link => document.querySelector(link.getAttribute('href')))
+      .filter(Boolean);
+    const setActive = id => navLinks.forEach(link => {
+      const match = link.getAttribute('href') === `#${id}`;
+      link.classList.toggle('is-active', match);
+      if (match) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    }, { rootMargin: '-32% 0px -58% 0px' });
+    sections.forEach(section => observer.observe(section));
+  }
+
+  document.querySelectorAll('[data-copy-email]').forEach(button => {
+    let resetTimer;
+    button.addEventListener('click', async () => {
+      const email = button.dataset.copyEmail;
+      if (!email) return;
+      try {
+        await navigator.clipboard.writeText(email);
+      } catch {
+        const input = document.createElement('input');
+        input.value = email;
+        document.body.append(input);
+        input.select();
+        document.execCommand('copy');
+        input.remove();
+      }
+      clearTimeout(resetTimer);
+      button.classList.add('is-copied');
+      button.textContent = 'Email copied ✓';
+      resetTimer = setTimeout(() => {
+        button.classList.remove('is-copied');
+        button.textContent = 'Copy email';
+      }, 2400);
+    });
+  });
 });

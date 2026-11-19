@@ -1,23 +1,89 @@
 {% extends "layouts/base.html" %}
+{% block title %}ScholarshipSystem Case Study | Wilson Sedurifa{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/scholarship-case-study.css', v='4') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/case-study-layout-guard.css', v='2') }}">
+{% endblock %}
 {% block content %}
 <div class="case-progress" aria-hidden="true"><i></i></div>
 <main class="case-study">
-  <a class="case-study-back" href="{{ url_for('home') }}#projects">← Back to projects</a>
+  <a class="case-study-back" href="{{ url_for('home') }}#projects"><span class="case-study-back-icon" aria-hidden="true">←</span><span>Back to projects</span></a>
   <header class="case-hero" id="case-top">
-    <div class="case-hero-copy"><p class="eyebrow case-kicker">CASE STUDY / DJANGO</p><h1><span>Scholarship</span><span>System</span></h1><p class="case-study-lede">Scholarship management from intake to scholar lifecycle.</p><p>Our team built a Django staff portal that manages scholarship intake, examinations, document review, and scholar records, with concurrency-safe slot allocation by municipality and education level.</p></div>
-    <aside class="case-study-private"><p>Source code is private because this is a government system. Details are shared with permission.</p></aside>
+    <div class="case-hero-copy"><p class="eyebrow case-kicker">CASE STUDY / DJANGO · POSTGRESQL</p><h1><span>Scholarship</span><span>System</span></h1><p class="case-study-lede">Province-wide scholarship management from intake to scholar lifecycle.</p><p>Built for the Provincial Government of Bulacan, this Django staff portal manages scholarship intake, batch slot allocation, QR-verified examinations, OCR document checks, and scholar records across all districts and municipalities.</p></div>
+    <aside class="case-study-private"><p>Source code is private because this is a government system. Architecture details and interactive simulations are shared with permission.</p></aside>
   </header>
-  <nav class="case-mini-nav" aria-label="Case study sections"><a href="#problem">Problem</a><a href="#solution">Solution</a><a href="#slots">Slot logic</a><a href="#decisions">Decisions</a><a href="#flow">Flow</a></nav>
-  <section id="problem" class="case-section"><p class="eyebrow">01 / CONTEXT</p><h2>The problem</h2><p>Scholarship opportunities are limited and distributed per municipality and education level. Intake, review, examinations, and document checks involve many steps and staff members, so the process needs strict capacity control, clear status tracking, and an audit trail. [TODO: how this was done before]</p></section>
-  <section id="solution" class="case-section"><p class="eyebrow">02 / APPROACH</p><h2>The solution</h2><p>Our team built a Django web system for application intake, admissions review, examination scheduling with QR-based check-in, document verification, and scholar management including renewals, profile updates, and announcements. Staff roles and permissions are configurable at a granular level.</p></section>
-  <section id="slots" class="case-section"><p class="eyebrow">03 / CAPACITY</p><h2>How slot management works</h2><ul class="case-list"><li>Capacity is defined per semester, municipality, and education level, with separate public/private-school pools where needed.</li><li>Staff allocate slots through a preview-and-confirm flow that detects stale previews before saving.</li><li>A slot is reserved only when staff mark an applicant eligible for examination, so capacity reflects real progress.</li><li>Reservations use transactions, row locking, and conditional updates to prevent over-allocation when reviewers work at the same time.</li><li>Capacity cannot be reduced below what is already used, and duplicate pools are blocked at the database level.</li><li>If a pool is full, the applicant is routed to a slots-full outcome.</li><li>Every capacity or publication change creates an auditable operation record.</li></ul></section>
-  <section id="decisions" class="case-section"><p class="eyebrow">04 / ENGINEERING</p><h2>Key technical decisions</h2><ul class="case-list"><li>Append-only status history supports a full audit trail, and the workflow allows only valid status transitions.</li><li>Category-level publication controls are separate from capacity configuration.</li><li>Academic-year validation allows one active year and prevents overlapping periods.</li><li>A versioned dynamic form builder supports controlled changes to application data collection.</li><li>An automated test suite includes more than 300 tests.</li></ul></section>
+  <nav class="case-mini-nav" aria-label="Case study sections"><a href="#problem">Problem</a><a href="#solution">Solution</a><a href="#slots">Slot logic</a><a href="#decisions">Decisions</a><a href="#flow">Flow</a><a href="#impact">Impact</a><a href="#gallery">Gallery</a></nav>
+  <section id="problem" class="case-section"><p class="eyebrow">01 / CONTEXT</p><h2>The problem</h2><p>Scholarship opportunities are limited and distributed across all districts, municipalities, and education levels in Bulacan. Previously, tracking slots and applicant requirements relied on manual, spreadsheet-based processes — leading to repeated encoding, hard-to-verify capacities across municipalities, and delayed status updates when multiple staff members reviewed applications at the same time.</p></section>
+  <section id="solution" class="case-section"><p class="eyebrow">02 / APPROACH</p><h2>The solution</h2><p>Our team built a Django web system backed by PostgreSQL for application intake, admissions review, examination scheduling with QR code generation and a built-in QR scanner, OCR-assisted document verification, and scholar lifecycle management including renewals, profile updates, and announcements. An AI chatbot powered by the Hugging Face API and deployed via Telegram also lets applicants get direct assistance, while staff roles and permissions remain configurable at a granular level.</p></section>
+  <section id="slots" class="case-section"><p class="eyebrow">03 / CAPACITY</p><h2>How slot management works</h2><ul class="case-list"><li>Capacity is defined per semester, district, municipality, and education level (Junior High, Senior High, Masteral, Board Review), with separate public/private-school or single-pool modes.</li><li>Staff stage batch allocations across multiple districts and municipalities in a save-preview queue that detects stale previews before committing to PostgreSQL.</li><li>A slot is reserved only when staff mark an applicant eligible for examination, so capacity reflects real progress.</li><li>Reservations use database transactions, row locking (<code>select_for_update()</code>), and conditional updates to prevent over-allocation when reviewers work concurrently.</li><li>Capacity cannot be reduced below what is already used, and duplicate pools are blocked at the database level.</li><li>If a pool is full, the applicant is automatically routed to a slots-full outcome, and every capacity or publication change creates an auditable operation record.</li></ul>
+  <div class="slot-sim" data-slot-sim aria-labelledby="sim-title">
+    <div class="slot-sim-head">
+      <div><p class="eyebrow">INTERACTIVE DEMO / CONCURRENCY</p><h3 id="sim-title">See how row locking prevents over-allocation</h3><p>Scenario: <strong>Bulakan · Senior High (Public)</strong> has <strong>1 slot remaining</strong>. Two staff reviewers approve different applicants at the exact same millisecond.</p></div>
+      <div class="slot-sim-controls">
+        <div class="slot-sim-modes" role="group" aria-label="Simulation mode">
+          <button type="button" data-sim-mode="locked" aria-pressed="true">With select_for_update()</button>
+          <button type="button" data-sim-mode="naive" aria-pressed="false">Without locking</button>
+        </div>
+        <button type="button" class="slot-sim-run" data-sim-run>Run concurrent review ▶</button>
+      </div>
+    </div>
+    <div class="slot-sim-metrics">
+      <div><span>POOL CAPACITY</span><strong>220</strong></div>
+      <div><span>RESERVED</span><strong data-sim-reserved>219</strong></div>
+      <div><span>REMAINING</span><strong data-sim-remaining>1</strong></div>
+      <div><span>INTEGRITY</span><strong data-sim-status>READY</strong></div>
+    </div>
+    <div class="slot-sim-log" data-sim-log aria-live="polite"><p class="sim-muted">Click “Run concurrent review” to trace Staff A and Staff B hitting the same slot pool simultaneously.</p></div>
+  </div>
+  </section>
+  <section id="decisions" class="case-section"><p class="eyebrow">04 / ENGINEERING</p><h2>Key technical decisions</h2><ul class="case-list"><li>Append-only status history supports a full audit trail, and the workflow allows only valid status transitions.</li><li>Scheduled publication controls (<code>Not scheduled</code>, <code>Scheduled</code>, <code>Published</code>, <code>Paused</code>) are decoupled from capacity configuration with full change history.</li><li>Academic-year validation enforces one active year at a time and prevents overlapping periods.</li><li>A versioned dynamic form builder supports controlled changes to application data collection without code edits.</li><li>An automated test suite includes more than 300 tests covering slot locking, workflows, and permissions.</li></ul></section>
   <section id="flow" class="case-section case-diagram-section"><p class="eyebrow">05 / WORKFLOW</p><h2>System flow</h2><div class="flow-diagram" data-diagram><svg class="flow-desktop" viewBox="0 0 1120 180" role="img" aria-labelledby="flow-title"><title id="flow-title">Application, review, slot reservation, exam, documents, approval, and scholar workflow</title><defs><marker id="flow-arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z"/></marker></defs><g class="flow-lines"><path d="M130 90H180 M280 90H330 M470 90H520 M620 90H670 M770 90H820 M920 90H970"/></g><g class="flow-nodes"><g transform="translate(20 55)"><rect width="110" height="70"/><text x="55" y="42">Application</text></g><g transform="translate(180 55)"><rect width="100" height="70"/><text x="50" y="42">Review</text></g><g transform="translate(330 55)"><rect width="140" height="70"/><text x="70" y="42">Slot reservation</text></g><g transform="translate(520 55)"><rect width="100" height="70"/><text x="50" y="42">Exam</text></g><g transform="translate(670 55)"><rect width="100" height="70"/><text x="50" y="42">Documents</text></g><g transform="translate(820 55)"><rect width="100" height="70"/><text x="50" y="42">Approval</text></g><g transform="translate(970 55)"><rect width="110" height="70"/><text x="55" y="42">Scholar</text></g></g></svg><svg class="flow-mobile" viewBox="0 0 360 770" role="img" aria-labelledby="flow-mobile-title"><title id="flow-mobile-title">Vertical application workflow from application through scholar</title><defs><marker id="flow-arrow-mobile" markerWidth="10" markerHeight="10" refX="3" refY="9" orient="auto"><path d="M0,0 L6,0 L3,9 z"/></marker></defs><g class="flow-lines"><path d="M180 110V145 M180 215V250 M180 320V355 M180 425V460 M180 530V565 M180 635V670"/></g><g class="flow-nodes"><g transform="translate(70 40)"><rect width="220" height="70"/><text x="110" y="42">Application</text></g><g transform="translate(70 145)"><rect width="220" height="70"/><text x="110" y="42">Review</text></g><g transform="translate(70 250)"><rect width="220" height="70"/><text x="110" y="42">Slot reservation</text></g><g transform="translate(70 355)"><rect width="220" height="70"/><text x="110" y="42">Exam</text></g><g transform="translate(70 460)"><rect width="220" height="70"/><text x="110" y="42">Documents</text></g><g transform="translate(70 565)"><rect width="220" height="70"/><text x="110" y="42">Approval</text></g><g transform="translate(70 670)"><rect width="220" height="70"/><text x="110" y="42">Scholar</text></g></g></svg></div></section>
   <section class="case-section case-diagram-section"><p class="eyebrow">06 / DATA MODEL</p><h2>Slot model</h2><svg class="erd-diagram" viewBox="0 0 760 310" role="img" aria-labelledby="erd-title"><title id="erd-title">Semester and Education Level connect to Slot Management, which connects to Slot Pool</title><defs><marker id="erd-arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z"/></marker></defs><path d="M230 90H350 M230 220H350 M530 155H630"/><g><rect x="40" y="50" width="190" height="80"/><text x="135" y="97">Semester</text><rect x="40" y="180" width="190" height="80"/><text x="135" y="227">Education level</text><rect x="350" y="115" width="180" height="80"/><text x="440" y="162">Slot management</text><rect x="630" y="115" width="100" height="80"/><text x="680" y="162">Slot pool</text></g></svg></section>
-  <section class="case-section case-scale"><p class="eyebrow">07 / SCALE</p><h2>Built for a large workflow.</h2><div class="case-stats"><p><strong data-count="7">7</strong> Django apps</p><p><strong data-count="90">90+</strong> models</p><p><strong data-count="150">~150</strong> templates</p><p><strong data-count="300">300+</strong> tests</p></div><p>PostgreSQL · Gunicorn + WhiteNoise.</p></section>
-  <section class="case-section"><p class="eyebrow">08 / CONTRIBUTION</p><h2>What I handled</h2><ul class="case-list"><li>Developed backend features for the ScholarshipSystem and translated workflow requirements into application logic.</li><li>Built APIs that support the system’s connected workflow and data processing needs.</li><li>Created an OCR-based document validator to help check submitted requirements.</li><li>Implemented the process flow that guides records through the scholarship workflow.</li></ul></section>
-  <section class="case-section"><p class="eyebrow">09 / OUTCOME</p><h2>Impact</h2><p>The portfolio now presents project work in a clearer, more reliable way while keeping private-system source code and operational details out of the public site.</p></section>
+  <section class="case-section case-scale"><p class="eyebrow">07 / SCALE</p><h2>Built for a large workflow.</h2><div class="case-stats"><p><strong data-count="7">7</strong> Django apps</p><p><strong data-count="90">90+</strong> models</p><p><strong data-count="150">~150</strong> templates</p><p><strong data-count="300">300+</strong> tests</p></div><p>PostgreSQL · Gunicorn + WhiteNoise · Hugging Face API + Telegram Bot.</p></section>
+  <section class="case-section"><p class="eyebrow">08 / CONTRIBUTION</p><h2>What I handled</h2><ul class="case-list"><li>Developed core backend features and PostgreSQL schema for the ScholarshipSystem, translating provincial workflow rules into application logic.</li><li>Built the batch slot allocation save-preview flow, scheduled publication controls, and concurrency-safe slot reservation logic.</li><li>Created an OCR-based document validator and QR code generation/scanning workflow to speed up applicant verification.</li><li>Integrated a Telegram AI chatbot (Hugging Face API) so applicants can get instant guidance on requirements and process steps.</li></ul></section>
+  <section id="impact" class="case-section"><p class="eyebrow">09 / OUTCOME</p><h2>Operational impact</h2><p>Replaced fragmented, spreadsheet-based tracking with a single auditable platform across Bulacan’s districts and municipalities — turning multi-step manual checks into a fast, concurrency-safe staff workflow.</p>
+  <div class="impact-compare">
+    <article><span>BEFORE</span><h3>Manual &amp; fragmented</h3><ul><li>Spreadsheet-based slot tracking with manual cross-checking per municipality.</li><li>One-at-a-time capacity edits and delayed visibility into remaining slots.</li><li>Manual paper/file verification and repetitive applicant inquiries.</li></ul></article>
+    <article class="impact-after"><span>AFTER</span><h3>Structured &amp; auditable</h3><ul><li>Batch allocation save-preview across districts in a single pass with row-locked reservations.</li><li>Scheduled publication states and append-only audit logs for every status change.</li><li>Single-scan QR check-in, OCR document validation, and 24/7 Telegram chatbot assistance.</li></ul></article>
+  </div>
+  </section>
+  {% if screenshots %}
+  <section id="gallery" class="case-section case-gallery-section">
+    <p class="eyebrow">10 / SYSTEM GALLERY</p>
+    <h2>Inside the platform</h2>
+    <p>Sanitized interface previews covering the public portal, scholar self-service views, staff operations, and administrative controls ({{ screenshots|length }} screens).</p>
+    <div class="gallery-filters" role="group" aria-label="Filter screenshots by area">
+      <button type="button" data-gallery-filter="All" aria-pressed="true">All ({{ screenshots|length }})</button>
+      <button type="button" data-gallery-filter="Public" aria-pressed="false">Public</button>
+      <button type="button" data-gallery-filter="Scholar" aria-pressed="false">Scholar</button>
+      <button type="button" data-gallery-filter="Staff" aria-pressed="false">Staff</button>
+      <button type="button" data-gallery-filter="Admin" aria-pressed="false">Admin</button>
+    </div>
+    <div class="case-gallery-grid" data-case-gallery>
+      {% for shot in screenshots %}
+      <figure class="case-gallery-card" data-category="{{ shot.category }}">
+        <button type="button" class="case-gallery-trigger" data-gallery-index="{{ loop.index0 }}" data-src="{{ url_for('static', filename=shot.path) }}" data-label="{{ shot.label }}" data-category="{{ shot.category }}" aria-label="Open {{ shot.label }} screenshot">
+          <img src="{{ url_for('static', filename=shot.path) }}" alt="ScholarshipSystem — {{ shot.label }}" loading="lazy" width="1440" height="810">
+          <figcaption><span class="gallery-badge">{{ shot.category }}</span><strong>{{ '%02d'|format(loop.index) }} · {{ shot.label }}</strong></figcaption>
+        </button>
+      </figure>
+      {% endfor %}
+    </div>
+  </section>
+  <dialog class="case-lightbox" id="case-lightbox" aria-labelledby="lightbox-title">
+    <div class="case-lightbox-bar">
+      <div><span class="gallery-badge" id="lightbox-category"></span><h3 id="lightbox-title"></h3></div>
+      <div class="case-lightbox-controls">
+        <span id="lightbox-counter"></span>
+        <button type="button" data-lightbox-prev aria-label="Previous screenshot">←</button>
+        <button type="button" data-lightbox-next aria-label="Next screenshot">→</button>
+        <button type="button" data-lightbox-close aria-label="Close preview">×</button>
+      </div>
+    </div>
+    <div class="case-lightbox-stage"><img id="lightbox-img" alt=""></div>
+  </dialog>
+  {% endif %}
 </main>
-<script src="{{ url_for('static', filename='js/scholarship-case-study.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/scholarship-case-study.js', v='3') }}" defer></script>
 <script src="{{ url_for('static', filename='js/flow-diagram-fix.js') }}" defer></script>
 {% endblock %}

@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!screens.length) return;
   const details = [...section.querySelectorAll('[data-details-index]')];
   const device = section.querySelector('.showcase-device');
-  const laptop = section.querySelector('.project-laptop');
   const layout = section.querySelector('.showcase-layout');
   const interfaceStage = section.querySelector('#interface-stage');
   const systemStage = section.querySelector('#system-stage');
@@ -30,8 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(image.classList.contains('image-error'))return;
     viewerImage.src=image.src;
     viewerImage.alt=image.alt;
+    const caption=image.dataset.caption;
     viewer.querySelector('#viewer-title').textContent=details[selected].querySelector('h3').textContent;
-    viewer.querySelector('#viewer-caption').textContent=`Screenshot ${positions[selected]+1} · scroll to explore`;
+    viewer.querySelector('#viewer-caption').textContent=caption?`Screenshot ${positions[selected]+1} · ${caption}`:`Screenshot ${positions[selected]+1} · scroll to explore`;
     zoom.value='fit';
     viewerImage.onload=setZoom;
     viewer.showModal();
@@ -105,9 +105,11 @@ document.addEventListener('DOMContentLoaded', () => {
     galleryControls.hidden = !images.length;
     scrollNote.hidden = !images.length;
     if (images.length) positions[selected] %= images.length;
-    imageCounter.textContent = `${positions[selected] + 1} / ${images.length} screenshots`;
+    const currentCaption = images[positions[selected]]?.dataset.caption;
+    imageCounter.textContent = currentCaption
+      ? `${positions[selected] + 1} / ${images.length} · ${currentCaption}`
+      : `${positions[selected] + 1} / ${images.length} screenshots`;
     section.querySelectorAll('[data-image-prev],[data-image-next]').forEach(button => button.disabled = images.length < 2);
-    section.querySelector('#project-counter').textContent = `${String(selected + 1).padStart(2,'0')} / ${String(screens.length).padStart(2,'0')}`;
     section.querySelectorAll('[data-project-index]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.projectIndex) === selected)));
   }
 
@@ -154,8 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   section.querySelectorAll('[data-project-index]').forEach(button => button.addEventListener('click', () => select(Number(button.dataset.projectIndex))));
-  section.querySelector('[data-project-prev]').addEventListener('click', () => select(selected - 1));
-  section.querySelector('[data-project-next]').addEventListener('click', () => select(selected + 1));
   section.querySelector('[data-image-prev]').addEventListener('click', () => gallery(-1));
   section.querySelector('[data-image-next]').addEventListener('click', () => gallery(1));
   device.addEventListener('keydown', event => {
@@ -175,67 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateControls();
   }));
   screens.forEach((screen,index) => { screen.inert = index !== 0; });
-  Promise.all([...section.querySelectorAll('.project-slide')].map(prepare)).finally(updateControls);
-  // Scroll owns the outer camera; project switching owns the inner laptop.
-  // Separate transform layers avoid animation collisions and reverse naturally.
-  // The 3D scroll choreography is desktop-only. Mobile keeps a stable preview
-  // and lets touch interaction focus on selecting projects and reading details.
-  if (!reduced.matches && innerWidth > 760) {
-    const heading=section.querySelector('.showcase-top');
-    const selector=section.querySelector('.project-selector');
-    const bottom=section.querySelector('.showcase-bottom');
-    const title=heading.querySelector('h2');
-    const intro=heading.querySelector('p:not(.eyebrow)');
-    const clamp=value=>Math.min(1,Math.max(0,value));
-    const ease=value=>{value=clamp(value);return value*value*(3-2*value);};
-    let frameId=0;
-    let current=scrollY;
-    function reveal(element, distance, top, offset=0) {
-      const amount=ease((innerHeight*1.05-top-offset)/(innerHeight*.34));
-      element.style.opacity=.8+.2*amount;
-      element.style.translate=`0 ${(1-amount)*distance}px`;
-    }
-    function paint(){
-      frameId=0;
-      if(reduced.matches)return;
-      current+=(scrollY-current)*.09;
-      // Measure untransformed layout, not last frame's animated bounding box.
-      const sectionTop=section.getBoundingClientRect().top+scrollY;
-      const top=sectionTop-current;
-      const deviceTop=top+layout.offsetTop+section.querySelector('.showcase-visual').offsetTop;
-      const entry=ease((innerHeight*1.08-deviceTop)/(innerHeight*.4));
-      const mobile=innerWidth<=760;
-      const camera=ease((innerHeight*.9-deviceTop)/innerHeight);
-      device.style.opacity=.65+.35*entry;
-      device.style.transform=`translate3d(0,${(1-entry)*(mobile?28:70)}px,0) scale(${.94+entry*.06})`;
-      laptop.style.transform=`rotateX(${mobile?3:6+(1-camera)*10}deg) rotateY(${mobile?0:-9+camera*12}deg)`;
-      // The hinge and camera use separate layers so screenshots keep their size.
-      laptop.querySelector('.project-lid').style.transform=`rotateX(${(1-entry)*-88}deg)`;
-      section.style.setProperty('--showcase-light',String(.12+entry*.13));
-      reveal(heading,45,top+heading.offsetTop);
-      const titleProgress=ease((innerHeight*.93-top-heading.offsetTop)/(innerHeight*.4));
-      title.style.clipPath=`inset(0 0 ${(1-titleProgress)*100}% 0)`;
-      title.style.translate=`0 ${(1-titleProgress)*24}px`;
-      if(intro)intro.style.opacity=ease((titleProgress-.2)/.8);
-      reveal(selector,35,deviceTop,40);
-      reveal(bottom,25,top+bottom.offsetTop);
-      if(Math.abs(scrollY-current)>.2) frameId=requestAnimationFrame(paint);
-    }
-    const schedule=()=>{if(!frameId)frameId=requestAnimationFrame(paint);};
-    addEventListener('scroll',schedule,{passive:true});
-    addEventListener('resize',schedule,{passive:true});
-    reduced.addEventListener('change',()=>{
-      if(reduced.matches){
-        cancelAnimationFrame(frameId);
-        frameId=0;
-        device.style.removeProperty('transform');
-        device.style.removeProperty('opacity');
-        laptop.style.removeProperty('transform');
-        laptop.querySelector('.project-lid').style.removeProperty('transform');
-      }else schedule();
-    });
-    // Moving focus to a control always makes its surrounding content legible.
-    section.addEventListener('focusin',()=>{selector.style.opacity='1';bottom.style.opacity='1';});
-    schedule();
-  }
+  updateControls();
+  prepare(screens[0].querySelector('.project-slide')).finally(updateControls);
 });
